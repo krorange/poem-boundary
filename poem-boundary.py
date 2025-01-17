@@ -12,7 +12,7 @@ import subprocess
 import os
 
 # Define the folder
-folder_path = '~/output/aa_poets'
+folder_path = 'enter_folder_name'
 
 # Extract the folder name from the given path
 folder_name = os.path.basename(os.path.normpath(folder_path))
