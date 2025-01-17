@@ -1,4 +1,4 @@
-# How to download our poetry data on an HTRC data capsule
+# How to download our poetry data in an HTRC data capsule
 1. Make an HTRC data capsule
 2. Connect via remote desktop. Make sure that you are in maintenance mode.
 3. Open a web browser in the remote desktop. Go to the Google Drive folder "Summer2024", and download `poem-boundary.py` and folders: `aa_poets`, `na_poets`, `lxa_poets`, `apa-pa_poets`, `apa-aa_poets`.
