@@ -11,40 +11,51 @@ import pandas as pd
 import subprocess
 import os
 
-# Define the folder
-folder_path = 'enter_folder_name'
+# Define the folder containing the CSV files
+# The default path is: '/home/dcuser/Downloads/...'
+folder_path = '/home/dcuser/Downloads/na_poets'
 
 # Extract the folder name from the given path
 folder_name = os.path.basename(os.path.normpath(folder_path))
 
 # Use the extracted folder name as the output folder name
-output_folder = folder_name
+output_folder = folder_name + '_annotations'
 
 # Create the output folder if it doesn't exist
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
+# Define the skipped file name dynamically
+skipped_file_name = f"skipped_{folder_name}.txt"
+
 # Function to generate the boundary range
 def boundary(st, ed):
     return list(range(st, ed + 1))
 
+# Keep track of skipped CSV names (document IDs)
+skipped_names = []
+
 # Loop through each CSV file in the folder
 for file_name in os.listdir(folder_path):
     if file_name.endswith('.csv'):
+        # Construct the full path to the CSV file
         file_path = os.path.join(folder_path, file_name)
         
-        # Read the CSV file into a DataFrame
+        # Read the CSV file
         df = pd.read_csv(file_path)
         
-        # Extract the file name for use in the command
+        # Extract the file name without extension
         csv_name = os.path.splitext(file_name)[0]
 
         # Check if the necessary columns exist in the CSV
         if 'File Name (start)' in df.columns and 'File Name (end)' in df.columns:
+            # Collect all ranges into a single list
             all_file_numbers = []
+
             for st, ed in zip(df['File Name (start)'], df['File Name (end)']):
-                if pd.notna(st) and pd.notna(ed):
+                if pd.notna(st) and pd.notna(ed):  # Check for non-NaN values
                     try:
+                        # Convert to integer and generate the range for each row
                         st = int(st)
                         ed = int(ed)
                         all_file_numbers.extend(boundary(st, ed))
@@ -53,20 +64,33 @@ for file_name in os.listdir(folder_path):
             
             # Remove duplicates and sort the file numbers
             all_file_numbers = sorted(set(all_file_numbers))
-            
+
             # Construct the output directory path for this particular CSV file
             csv_output_dir = os.path.join(output_folder, csv_name)
             
             # Generate the htrc download command
-            command = f"htrc download -o /media/secure_volume/{csv_name} -pg {csv_name}[{','.join(map(str, all_file_numbers))}]"
+            pages_str = ",".join(map(str, all_file_numbers))
+            command = f"htrc download -o {csv_output_dir} -pg {csv_name}[{pages_str}]"
             
-            # Print the command
+            # Print the final command
             print(f"Executing: {command}")
-            
+
             # Attempt to run the command
             try:
                 subprocess.run(command, shell=True, check=True)
             except subprocess.CalledProcessError as e:
+                # If the command fails, print an error and skip this CSV file
                 print(f"Command failed for {csv_name}. Skipping.")
+                skipped_names.append(f"{csv_name}[{pages_str}]")
+
         else:
-            print(f"Skipping {file_name}: required columns not found")
+            print(f"Skipping {file_name}: required columns not found".)
+
+# Create a text file for skipped CSV names
+if skipped_names:
+    with open(skipped_file_name, "w") as f:
+        for name in skipped_names:
+            f.write(name + "\n")
+        print(f"Skipped CSV names written to {skipped_file_name}")
+else:
+    print("No CSV names were skpped.")
