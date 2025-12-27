@@ -13,7 +13,8 @@ import os
 
 # Define the folder containing the CSV files
 # The default path is: '/home/dcuser/Downloads/...'
-folder_path = '/home/dcuser/Downloads/na_poets'
+# Select one folder among 'aa_poets', 'apa-aa_poets', 'apa-pa_poets', 'lxa_poets', 'na_poets'
+folder_path = '/home/dcuser/Downloads/aa_poets'
 
 # Extract the folder name from the given path
 folder_name = os.path.basename(os.path.normpath(folder_path))
@@ -25,14 +26,14 @@ output_folder = folder_name + '_annotations'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
-# Define the skipped file name dynamically
+# Define the skipped file name
 skipped_file_name = f"skipped_{folder_name}.txt"
 
 # Function to generate the boundary range
 def boundary(st, ed):
     return list(range(st, ed + 1))
 
-# Keep track of skipped CSV names (document IDs)
+# Keep track of skipped CSV names (volume IDs)
 skipped_names = []
 
 # Loop through each CSV file in the folder
@@ -53,7 +54,7 @@ for file_name in os.listdir(folder_path):
             all_file_numbers = []
 
             for st, ed in zip(df['File Name (start)'], df['File Name (end)']):
-                if pd.notna(st) and pd.notna(ed):  # Check for non-NaN values
+                if pd.notna(st) and pd.notna(ed):
                     try:
                         # Convert to integer and generate the range for each row
                         st = int(st)
