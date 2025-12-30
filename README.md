@@ -1,4 +1,6 @@
-# How to download our poem section data in an HathiTrust Research Center (HTRC) Data Capsule
+# A Dataset of American Poetry by Poets from Historically Underrepresented Groups in the HathiTrust Digital Library
+
+## How to download our poem section data in an HathiTrust Research Center (HTRC) Data Capsule
 1. Create an HTRC Data Capsule at <https://analytics.hathitrust.org/staticcapsules>
 2. Connect via remote desktop. Make sure that you are in maintenance mode.
 3. Open a web browser in the remote desktop. Download `poem-boundary.py` and folders: `aa_poets`, `na_poets`, `lxa_poets`, `apa-pa_poets`, `apa-aa_poets`.
